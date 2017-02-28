@@ -3,18 +3,34 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { saveGame } from '../actions/games';
+import { saveGame, fetchGame, updateGame } from '../actions/games';
 
 class FormPage extends Component {
 
   constructor(props){
     super(props);
     this.state = {
-      title: '',
-      cover: '',
+      _id: this.props.game ? this.props.game._id : null,
+      title: this.props.game ? this.props.game.title : '',
+      cover: this.props.game ? this.props.game.image : '',
       errors: {},
       loading: false,
       done: false
+    }
+  }
+
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      _id: nextProps.game._id,
+      title: nextProps.game.title,
+      cover: nextProps.game.image
+    })
+  }
+
+  componentDidMount() {
+    if(this.props.params._id) {
+      this.props.fetchGame(this.props.params._id);
     }
   }
 
@@ -42,13 +58,19 @@ class FormPage extends Component {
     const isValid = Object.keys(errors).length === 0;
 
     if(isValid) {
-      const { title, cover } = this.state;
+      const { _id, title, cover } = this.state;
       this.setState({loading: true});
-      this.props.saveGame({title, cover}).then(
-        () => {this.setState({done: true})},
-        // (err) => err.response.json().then(({errors}) => this.setState({errors, loading: false }))
-        () => this.setState({loading: false})
-      );
+      if(_id) {
+        this.props.updateGame({ _id, title, cover}).then(
+          () => {this.setState({done: true})},
+          () => this.setState({loading: false})
+        )
+      } else {
+        this.props.saveGame({title, cover}).then(
+          () => {this.setState({done: true})},
+          () => this.setState({loading: false})
+        );
+      }
     }
   }
 
@@ -89,6 +111,14 @@ class FormPage extends Component {
   }
 }
 
+function mapStateToProps(state, props) {
+  if(props.params._id){
+    return {
+      game: state.games.find(item => item._id === props.params._id)
+    }
+  }
 
+  return { game: null };
+}
 
-export default connect(null, { saveGame })(FormPage);
+export default connect(mapStateToProps, { saveGame, fetchGame, updateGame })(FormPage);

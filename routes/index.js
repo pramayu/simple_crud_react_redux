@@ -22,6 +22,12 @@ router.get('/api/games', function(req, res, next){
   })
 });
 
+router.get('/api/games/:_id', function(req, res, next){
+  model.Game.findOne({ _id: req.params._id }, function(err, game){
+    res.json({ game });
+  })
+})
+
 router.post('/api/games', function(req, res, next){
   // var { errors, isValid } = validation(req.body);
   // if(isValid) {
@@ -35,5 +41,18 @@ router.post('/api/games', function(req, res, next){
     // res.status(404).json({errors});
   // }
 });
+
+router.put('/api/games/:_id', function(req, res, next){
+  model.Game.update({_id: req.params._id}, {$set: { title: req.body.title, image: req.body.cover}}, function(err, result){
+    res.json({game: result});
+  })
+})
+
+
+router.delete('/api/games/:_id', function(req, res, next){
+  model.Game.findByIdAndRemove(req.params._id, function(err, game){
+    res.json({});
+  })
+})
 
 module.exports = router;

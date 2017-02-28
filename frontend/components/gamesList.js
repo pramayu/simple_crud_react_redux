@@ -10,7 +10,7 @@ class GamesList extends Component {
 
     const gamesList = (
       <div className='ui four cards'>
-        { this.props.games.map(game => <GameCard game={game} key={game._id} />)}
+        { this.props.games.map(game => <GameCard game={game} key={game._id} deleteGame={this.props.deleteGame} />)}
       </div>
     );
 
@@ -23,7 +23,8 @@ class GamesList extends Component {
 }
 
 GamesList.propTypes = {
-  games: React.PropTypes.array.isRequired
+  games: React.PropTypes.array.isRequired,
+  deleteGame: React.PropTypes.func.isRequired
 }
 
 export default GamesList;

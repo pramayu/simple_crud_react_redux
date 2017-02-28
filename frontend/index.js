@@ -21,6 +21,7 @@ const router = (
       <Route path="/" component={App}>
         <Route path="games" component={GamesPage} />
         <Route path="games/new" component={FormPage} />
+        <Route path="game/:_id" component={FormPage} />
       </Route>
     </Router>
   </Provider>
